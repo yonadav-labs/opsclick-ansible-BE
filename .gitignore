@@ -1,0 +1,5 @@
+.#*.py
+__pycache__/
+proxy-cache/
+*.sqlite3
+env/

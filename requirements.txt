@@ -1,0 +1,8 @@
+Django
+djangorestframework
+markdown 
+django-filter
+pymongo
+mongoengine
+blinker
+django-rest-framework-mongoengine
