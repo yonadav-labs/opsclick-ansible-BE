@@ -1,7 +1,7 @@
 version: '2'
 services:
   api:
-    image: api-deploy:latest
+    image: opsclick-api-deploy:latest
     container_name: api
     volumes:
       - .:/code

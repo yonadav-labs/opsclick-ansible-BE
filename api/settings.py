@@ -31,7 +31,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'core.apps.CoreConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -41,11 +40,21 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_mongoengine',
     'rest_framework.authtoken',
-    'mongoadmin',
-    'mongoengine.django.mongo_auth',
+    'core.apps.CoreConfig',
 ]
 
-MONGOADMIN_OVERRIDE_ADMIN = True
+#MONGOADMIN_OVERRIDE_ADMIN = True
+
+#AUTHENTICATION_BACKENDS = ( 
+#    'mongoengine.django.auth.MongoEngineBackend',
+# )
+#AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+#MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
+
+#SESSION_ENGINE = 'mongoengine.django.sessions'
+#SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
+
+APPEND_SLASH=False
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -60,14 +69,14 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'api.urls'
 
 REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticated',
-    ),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.BasicAuthentication',
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    )
+#    'DEFAULT_PERMISSION_CLASSES': (
+#        'rest_framework.permissions.IsAuthenticated',
+#    ),
+#    'DEFAULT_AUTHENTICATION_CLASSES': (
+#        'rest_framework.authentication.BasicAuthentication',
+#        'rest_framework.authentication.SessionAuthentication',
+#        'rest_framework.authentication.TokenAuthentication',
+#    )
 }
 
 TEMPLATES = [
@@ -94,8 +103,8 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'ENGINE': 'django.db.backends.dummy',
+#        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
 
