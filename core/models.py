@@ -11,3 +11,7 @@ class User(Document):
 class Service(Document):
     name = fields.StringField(max_length=50)
 
+class Setup(Document):
+    service = fields.StringField(max_length=50)
+    cloud = fields.StringField(max_length=50)
+

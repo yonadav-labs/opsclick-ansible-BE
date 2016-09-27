@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/1.10/ref/settings/
 """
 
 import os
+from kombu import Exchange, Queue
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -63,12 +64,22 @@ MONGODB_DATABASES = {
     },
 }
 
-BROKER_URL = 'redis://redis:6379'
-CELERY_RESULT_BACKEND = 'redis://redis:6379'
-CELERY_ACCEPT_CONTENT = ['json']
+# Redis
+REDIS_PORT = 6379
+REDIS_DB = 0
+REDIS_HOST = 'redis'
+
+# Celery configuration
+BROKER_URL = 'redis://redis:6379/0'
+
+CELERY_DEFAULT_QUEUE = 'default'  
+CELERY_QUEUES = (  
+    Queue('default', Exchange('default'), routing_key='default'),
+)
+CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)  
+CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
 CELERY_RESULT_SERIALIZER = 'json'
-CELERY_IMPORTS = ('core.tasks')
 
 APPEND_SLASH=False
 

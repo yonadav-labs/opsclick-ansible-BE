@@ -1,8 +1,5 @@
 Django
 djangorestframework
-markdown 
-django-filter
-pymongo
 mongoengine
 django-rest-framework-mongoengine
 celery

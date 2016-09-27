@@ -6,3 +6,4 @@ env/
 datadb/
 django-mongoengine/
 run-docker.sh
+proxy.run

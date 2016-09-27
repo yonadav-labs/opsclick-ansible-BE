@@ -4,7 +4,7 @@ services:
     image: opsclick-api-deploy:latest
     container_name: api
     volumes:
-      - .:/code
+      - .:/app
     ports:
       - "8000:8000"
     command: python manage.py runserver 0.0.0.0:8000
@@ -12,9 +12,19 @@ services:
       - ./env/common
     links:
       - mongodb
+      - redis
       - celery
-    logging:
-      driver: json-file
+    tty: true
+
+  worker:
+    image: opsclick-api-deploy:latest
+    volumes:
+      - .:/app
+    command: su -m apiuser -c "celery worker -A api -Q default -n default@%h -l info"
+    links:
+      - mongodb
+      - redis
+      - celery
     tty: true
 
   mongodb:
@@ -30,14 +40,14 @@ services:
     links:
       - redis
     environment:
-      CELERY_BROKER_URL: "redis://redis"
+      CELERY_BROKER_URL: "redis://redis/0"
     tty: true
 
   redis:
     image: redis:latest
     container_name: redis
     tty: true
-    
+
 volumes:
   datadb:
     driver: local
