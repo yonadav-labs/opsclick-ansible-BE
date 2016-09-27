@@ -3,3 +3,6 @@ __pycache__/
 proxy-cache/
 *.sqlite3
 env/
+datadb/
+django-mongoengine/
+run-docker.sh

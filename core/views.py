@@ -3,6 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.models import User, Service
 from core.serializers import ServiceSerializer, UserSerializer
+from core.tasks import ansible_setup
+from subprocess import call
+
 
 @api_view(['GET', 'POST'])
 def index(request):
@@ -50,4 +53,15 @@ def service_detail(request, service_name):
 
     if request.method == 'DELETE':
         pass
+
+
+@api_view(['POST'])
+def setup_service(request):
+    if request.method == 'POST':
+        serializer = ServiceSerializer(data=request.data)
+        if serializer.is_valid():
+            ansible_setup.delay()
+            return Response("Ok", status.HTTP_201_CREATED)
+        else:
+            return Response("Error", status=status.HTTP_400_BAD_REQUEST)
 

@@ -37,22 +37,38 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    'django_mongoengine',
+    'django_mongoengine.mongo_auth',
+
     'rest_framework',
     'rest_framework_mongoengine',
     'rest_framework.authtoken',
     'core.apps.CoreConfig',
 ]
 
-#MONGOADMIN_OVERRIDE_ADMIN = True
+AUTH_USER_MODEL = 'mongo_auth.MongoUser'
 
-#AUTHENTICATION_BACKENDS = ( 
-#    'mongoengine.django.auth.MongoEngineBackend',
-# )
-#AUTH_USER_MODEL = 'mongo_auth.MongoUser'
-#MONGOENGINE_USER_DOCUMENT = 'mongoengine.django.auth.User'
+AUTHENTICATION_BACKENDS = (
+    'django_mongoengine.mongo_auth.backends.MongoEngineBackend',
+)
 
-#SESSION_ENGINE = 'mongoengine.django.sessions'
-#SESSION_SERIALIZER = 'mongoengine.django.sessions.BSONSerializer'
+SESSION_ENGINE = 'django_mongoengine.sessions'
+
+MONGODB_DATABASES = {
+    'default': {
+        'name': 'opsclick-api-deploy',
+        'host': 'mongo',
+        'tz_aware': True
+    },
+}
+
+BROKER_URL = 'redis://redis:6379'
+CELERY_RESULT_BACKEND = 'redis://redis:6379'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_IMPORTS = ('core.tasks')
 
 APPEND_SLASH=False
 
@@ -107,13 +123,6 @@ DATABASES = {
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
-
-# MongoDB configuration
-from mongoengine import connect
-MONGO_DATABASE_NAME = 'opsclick-api-deploy'
-MONGO_HOST = 'mongo'
-MONGO_PORT = 27017
-connect(MONGO_DATABASE_NAME, host=MONGO_HOST, port=MONGO_PORT)
 
 # Password validation
 # https://docs.djangoproject.com/en/1.10/ref/settings/#auth-password-validators
