@@ -7,3 +7,5 @@ datadb/
 django-mongoengine/
 run-docker.sh
 proxy.run
+django-rest-framework-mongoengine/
+*.retry

@@ -1,7 +1,7 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from core.models import User, Service
+from core.models import User, Service, Setup
 from core.serializers import ServiceSerializer, UserSerializer, SetupSerializer
 from core.tasks import ansible_setup
 
@@ -53,17 +53,18 @@ def service_detail(request, service_name):
     if request.method == 'DELETE':
         pass
 
+from rest_framework.compat import unicode_repr
 
 @api_view(['POST'])
 def setup_service(request):
     if request.method == 'POST':
         serializer = SetupSerializer(data=request.data)
+
         if serializer.is_valid():
-            ansible_setup.delay(
-                service=serializer.data['service'],
-                cloud=serializer.data['cloud']
-            )
+            print(serializer.data)
+            ansible_setup.delay(serializer.data)
             return Response(status=status.HTTP_201_CREATED)
         else:
+            print(serializer.errors)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 

@@ -4,4 +4,4 @@ mongoengine
 django-rest-framework-mongoengine
 celery
 redis
-ansible
+dopy==0.3.5

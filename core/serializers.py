@@ -1,5 +1,7 @@
 from rest_framework import serializers
-from core.models import User, Service, Setup
+from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
+
+from core.models import User, Service, Setup, Options
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -26,16 +28,15 @@ class ServiceSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-class SetupSerializer(serializers.Serializer):
-    service = serializers.CharField()
-    cloud = serializers.CharField()
+class OptionsSerializer(EmbeddedDocumentSerializer):
+    class Meta:
+        model = Options
 
-    def create(self, validated_data):
-        return Setup.objects.create(**validated_data)
+class SetupSerializer(DocumentSerializer):
+    options = OptionsSerializer(many=False)
 
-    def update(self, instance, validated_data):
-        instance.service = validated_data.get('service', instance.service)
-        instance.cloud = validated_data.get('cloud', instance.cloud)
-        instance.save()
-        return instance
+    class Meta:
+        model = Setup
+        depth = 2
+
 

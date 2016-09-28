@@ -20,7 +20,8 @@ services:
     image: opsclick-api-deploy:latest
     volumes:
       - .:/app
-    command: su -m apiuser -c "celery worker -A api -Q default -n default@%h -l info"
+#    command: su -m apiuser -c "celery worker -A api -Q default -n default@%h -l info"
+    command: celery worker -A api -Q default -n default@%h -l info
     links:
       - mongodb
       - redis
