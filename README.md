@@ -1,7 +1,11 @@
 # Setting up the servers
 Just use docker and docker-compose
 
-`docker-compose up -d`
+```bash
+$ git clone https://github.com/xyklex/django-mongoengine.git
+$ docker build -t opsclick-api-deploy:latest -t opsclick-api-deploy:0.1 .
+$ docker-compose up -d
+```
 
 And the app will be ready to accept requests
 
