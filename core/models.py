@@ -14,7 +14,10 @@ class Service(Document):
 class Options(EmbeddedDocument):
     access_key = fields.StringField()
     droplets = fields.ListField(fields.StringField(required=False))
-    state = fields.StringField(required=False)
+    size = fields.StringField()
+    region = fields.StringField()
+    image = fields.StringField()
+    state = fields.StringField()
 
 class Setup(Document):
     service = fields.StringField(max_length=50)

@@ -4,11 +4,12 @@ from rest_framework.response import Response
 from core.models import User, Service, Setup
 from core.serializers import ServiceSerializer, UserSerializer, SetupSerializer
 from core.tasks import ansible_setup
-
+from django.contrib.auth import authenticate
+from django_mongoengine.mongo_auth.models import MongoUser
 
 @api_view(['GET', 'POST'])
 def index(request):
-
+    
     if request.method == 'GET':
         users = User.objects.all()
         serializer = UserSerializer(users, many=True)
@@ -52,8 +53,6 @@ def service_detail(request, service_name):
 
     if request.method == 'DELETE':
         pass
-
-from rest_framework.compat import unicode_repr
 
 @api_view(['POST'])
 def setup_service(request):

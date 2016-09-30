@@ -24,9 +24,9 @@
         state: "{{ state }}"
         command: droplet
         name: "{{ item }}"
-        size_id: 512mb
-        region_id: sgp1
-        image_id: ubuntu-14-04-x64
+        size_id: "{{ size }}"
+        region_id: "{{ region }}"
+        image_id: "{{ image }}"
         ssh_key_ids: "{{ my_ssh_key.ssh_key.id }}"
         api_token: "{{ do_token }}"
         unique_name: yes

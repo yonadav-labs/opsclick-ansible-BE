@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'django_mongoengine',
+    'django_mongoengine.mongo_admin',
     'django_mongoengine.mongo_auth',
 
     'rest_framework',
@@ -49,12 +50,14 @@ INSTALLED_APPS = [
 ]
 
 AUTH_USER_MODEL = 'mongo_auth.MongoUser'
+#MONGOENGINE_USER_DOCUMENT = ''
 
 AUTHENTICATION_BACKENDS = (
     'django_mongoengine.mongo_auth.backends.MongoEngineBackend',
 )
 
 SESSION_ENGINE = 'django_mongoengine.sessions'
+SESSION_SERIALIZER = 'django_mongoengine.sessions.BSONSerializer'
 
 MONGODB_DATABASES = {
     'default': {
@@ -96,14 +99,21 @@ MIDDLEWARE = [
 ROOT_URLCONF = 'api.urls'
 
 REST_FRAMEWORK = {
-#    'DEFAULT_PERMISSION_CLASSES': (
+    'DEFAULT_RENDERER_CLASSES': (
+        'rest_framework.renderers.BrowsableAPIRenderer',
+        'rest_framework.renderers.JSONRenderer',
+    ),
+    'DEFAULT_PARSER_CLASSES': (
+        'rest_framework.parsers.JSONParser',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
 #        'rest_framework.permissions.IsAuthenticated',
-#    ),
-#    'DEFAULT_AUTHENTICATION_CLASSES': (
+    ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
 #        'rest_framework.authentication.BasicAuthentication',
 #        'rest_framework.authentication.SessionAuthentication',
 #        'rest_framework.authentication.TokenAuthentication',
-#    )
+    )
 }
 
 TEMPLATES = [
@@ -130,7 +140,7 @@ WSGI_APPLICATION = 'api.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.dummy',
+        'ENGINE': '',
 #        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }

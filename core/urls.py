@@ -1,6 +1,7 @@
 from django.conf.urls import include, url
 
 from . import views
+from . import digitalocean
 
 service_patterns = ([
     url(r'^$', views.service_list, name='service_list'),
@@ -11,8 +12,15 @@ setup_patterns = ([
     url(r'^$', views.setup_service, name='setup_service'),
 ], 'setup')
 
+digitalocean_patterns = ([
+    url(r'^images$', digitalocean.distribution_images, name='digitalocean images list'),
+    url(r'^regions$', digitalocean.regions, name='digitalocean regions list'),
+    url(r'^sizes$', digitalocean.sizes, name='digitalocean sizes list'),
+], 'digitalocean')
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^service', include(service_patterns)),
+    url(r'^service/', include(service_patterns)),
     url(r'^setup', include(setup_patterns)),
+    url(r'^digitalocean/', include(digitalocean_patterns)),
 ]
