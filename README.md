@@ -4,6 +4,8 @@ Just use docker and docker-compose
 ```bash
 $ git clone https://github.com/xyklex/django-mongoengine.git
 $ docker build -t opsclick-api-deploy:latest -t opsclick-api-deploy:0.1 .
+$ mkdir env
+$ echo 'DEBUG=1' >> env/common
 $ docker-compose up -d
 ```
 
