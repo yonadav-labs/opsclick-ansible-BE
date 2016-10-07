@@ -1,0 +1,8 @@
+#
+#About: This will install docker
+#
+---
+- hosts: '{{ target }}'
+  gather_facts: True
+  roles:
+  - docker

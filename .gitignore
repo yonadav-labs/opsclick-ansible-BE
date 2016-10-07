@@ -1,4 +1,3 @@
-.#*.py
 __pycache__/
 proxy-cache/
 *.sqlite3
@@ -9,3 +8,6 @@ run-docker.sh
 proxy.run
 django-rest-framework-mongoengine/
 *.retry
+*.swp
+.#*
+.python-version

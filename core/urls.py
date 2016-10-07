@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^service/', include(service_patterns)),
     url(r'^setup', include(setup_patterns)),
     url(r'^digitalocean/', include(digitalocean_patterns)),
+    url(r'^test_serializer', views.test_serializer, name='endpoint to test serializers'),
 ]

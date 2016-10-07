@@ -1,0 +1,24 @@
+{
+    "name": "Ansible API Documentation",
+    "version": "0.0.1",
+    "description": "Ansible API project",
+    "title": "Custom apiDoc browser title",
+    "url" : "https://api.github.com/v1",
+    "header": {
+        "title": "My own header title",
+        "filename": "header.md"
+    },
+    "footer": {
+        "title": "My own footer title",
+        "filename": "footer.md"
+    },
+    "order": [
+        "Core",
+        "DigitalOcean",
+        "AWS"
+    ],
+    "template": {
+  	    "withCompare": true,
+  	    "withGenerator": true
+    }
+}

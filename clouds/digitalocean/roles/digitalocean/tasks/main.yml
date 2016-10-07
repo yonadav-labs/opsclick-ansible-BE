@@ -1,0 +1,24 @@
+---
+- name: ensure key exists at DigitalOcean
+  digital_ocean: 
+    state: present
+    command: ssh
+    name: test_ssh_key
+    ssh_pub_key: "{{ ssh_pub_key }}"
+    api_token: "{{ do_token }}"
+  register: my_ssh_key
+
+- name: ensure the new droplet exists
+  digital_ocean: 
+    state: "{{ state }}"
+    command: droplet
+    name: "{{ item }}"
+    size_id: "{{ size }}"
+    region_id: "{{ region }}"
+    image_id: "{{ image }}"
+    ssh_key_ids: "{{ my_ssh_key.ssh_key.id }}"
+    api_token: "{{ do_token }}"
+    unique_name: yes
+  with_items: "{{ droplets }}"
+  register: droplet_details
+

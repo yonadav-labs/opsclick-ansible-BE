@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
 
-from core.models import User, Service, Setup, Options
+from core.models import User, Service, Setup, Options, AnsiblePlaybook, AnsiblePlay
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -27,6 +27,16 @@ class ServiceSerializer(serializers.Serializer):
         instance.name = validated_data.get('name', instance.name)
         instance.save()
         return instance
+
+class AnsiblePlaySerializer(EmbeddedDocumentSerializer):
+    class Meta:
+        model = AnsiblePlay
+
+class AnsiblePlaybookSerializer(DocumentSerializer):
+#    plays = AnsiblePlaySerializer()
+
+    class Meta:
+        model = AnsiblePlaybook
 
 class OptionsSerializer(EmbeddedDocumentSerializer):
     class Meta:
