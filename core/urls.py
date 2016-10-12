@@ -2,6 +2,7 @@ from django.conf.urls import include, url
 
 from . import views
 from . import digitalocean
+from . import aws
 
 service_patterns = ([
     url(r'^$', views.service_list, name='service_list'),
@@ -18,10 +19,15 @@ digitalocean_patterns = ([
     url(r'^sizes$', digitalocean.sizes, name='digitalocean sizes list'),
 ], 'digitalocean')
 
+aws_patterns = ([
+    url(r'^images$', aws.distribution_images, name='aws images list'),
+], 'aws')
+
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^service/', include(service_patterns)),
     url(r'^setup', include(setup_patterns)),
     url(r'^digitalocean/', include(digitalocean_patterns)),
+    url(r'^aws/', include(aws_patterns)),
     url(r'^test_serializer', views.test_serializer, name='endpoint to test serializers'),
 ]

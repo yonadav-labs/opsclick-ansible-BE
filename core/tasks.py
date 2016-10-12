@@ -1,12 +1,14 @@
 from celery.decorators import task
 from celery.utils.log import get_task_logger
-from celery import shared_task
+from celery import shared_task, task, chain
 from subprocess import call, run, PIPE, Popen
 from api.settings import BASE_DIR
 from rest_framework.renderers import JSONRenderer
 import os
 import json
-
+from .serializers import SetupSerializer, AnsiblePlaybookSerializer
+from .models import Setup, AnsiblePlaybook
+from tempfile import NamedTemporaryFile
 
 logger = get_task_logger(__name__)
 env = os.environ
@@ -34,35 +36,67 @@ def ansible_setup(data=None):
         except:
             ansible_call.kill()
             output, errs = ansible_call.communicate()
+
         outs  = json.loads(output.decode("utf-8"))
+        pb_serializer = AnsiblePlaybookSerializer(data=outs)
 
-        if options['state'] in ("present"):
-            for task in outs['tasks']:
-                info_host = task['hosts']['localhost']
-                if info_host:
-                    logger.info(info_host['results'][0]['droplets']['networks']['v4'][0]['ip_address'])
+        if pb_serializer.is_valid():
+            pb_instance = pb_serializer.save()
+            data['playbook'] = pb_instance.id
 
-            hosts = ""
-#            installing_docker(hosts)
+            setup = Setup(service=service,
+                          cloud=cloud,
+                          options=options,
+                          playbook=data['playbook'])
+            setup.save()
 
+            code = """
+        function() {
+            var droplets_ip = []
+            db[collection].find(query).forEach(function(doc) {
+                doc.plays.forEach(function(play) {
+                    play.tasks.forEach(function(task) {
+                        if(task.hosts.localhost.results) {
+                            task.hosts.localhost.results.forEach(function(result) {
+                                if(result.droplet) {
+                                    droplets_ip.push(result.droplet.ip_address);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+            if(droplets_ip.length > 0){
+                return droplets_ip;
+            } 
+            return false;
+        }
+        """
+        return AnsiblePlaybook.objects.filter(id=pb_instance.id,).exec_js(code)
+#            logger.info(AnsiblePlaybook.objects.filter(id=pb_instance.id,).exec_js(code))
     else:
         logger.warn("We need to know the service and the cloud")
 
+
 @shared_task
-def installing_docker(hosts=None):
+def install_docker(hosts=None):
     if not hosts:
         logger.info("You need to define the hosts")
         return
 
     docker_path = "{0}/clouds/lib/{1}".format(BASE_DIR, "docker")
     docker_playbook = docker_path + "/main.yml"
+    hosts_template = """
 
-    env['ANSIBLE_CONFIG'] = cloud_path + "/ansible.cfg"
-    command = ['ansible-playbook', docker_playbook, '-i', hosts_file]
-    ansible_call = Popen(command, stdout=PIPE, env=env)
-    try:
-        output, errs = ansible_call.communicate()
-    except:
-        ansible_call.kill()
-        output, errs = ansible_call.communicate()
+    """
+
+    env['ANSIBLE_CONFIG'] = docker_path + "/ansible.cfg"
+#    command = ['ansible-playbook', docker_playbook, '-i', ]
+#    logger.info("###--- JUST TESTING ---###")
+    # ansible_call = Popen(command, stdout=PIPE, env=env)
+    # try:
+    #     output, errs = ansible_call.communicate()
+    # except:
+    #     ansible_call.kill()
+    #     output, errs = ansible_call.communicate()
 

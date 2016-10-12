@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
 
-from core.models import User, Service, Setup, Options, AnsiblePlaybook, AnsiblePlay
+from core.models import User, Service, Setup, Options, AnsiblePlaybook, AnsiblePlay, AnsibleTask
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -28,25 +28,40 @@ class ServiceSerializer(serializers.Serializer):
         instance.save()
         return instance
 
+class AnsibleTaskSerializer(EmbeddedDocumentSerializer):
+    class Meta:
+        model = AnsibleTask
+        fields = ('hosts', 'task')
+
 class AnsiblePlaySerializer(EmbeddedDocumentSerializer):
+    tasks = AnsibleTaskSerializer(many=True)
+
     class Meta:
         model = AnsiblePlay
+        fields = ('play', 'tasks')
 
 class AnsiblePlaybookSerializer(DocumentSerializer):
-#    plays = AnsiblePlaySerializer()
+    plays = AnsiblePlaySerializer(many=True)
+
+    def create(self, validated_data):
+        return AnsiblePlaybook.objects.create(**validated_data)
 
     class Meta:
         model = AnsiblePlaybook
+        fields = ('plays', 'stats')
 
 class OptionsSerializer(EmbeddedDocumentSerializer):
     class Meta:
         model = Options
+        fields = '__all__'
 
 class SetupSerializer(DocumentSerializer):
     options = OptionsSerializer(many=False)
 
+    def create(self, validated_data):
+        return Setup.objects.create(**validated_data)
+
     class Meta:
         model = Setup
-        depth = 2
-
+        fields = ('service', 'cloud', 'options')
 

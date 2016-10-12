@@ -2,7 +2,6 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.models import User, Service, Setup
-from core.serializers import OptionsSerializer
 #from core.tasks import digitalocean_api
 from dopy.manager import DoManager
 

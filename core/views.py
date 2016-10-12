@@ -3,9 +3,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.models import User, Service, Setup
 from core.serializers import ServiceSerializer, UserSerializer, SetupSerializer, AnsiblePlaybookSerializer
-from core.tasks import ansible_setup
+from core.tasks import ansible_setup, install_docker
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
+from celery import chain
 
 @api_view(['GET', 'POST'])
 def index(request):
@@ -86,8 +87,8 @@ def setup_service(request):
         serializer = SetupSerializer(data=request.data)
 
         if serializer.is_valid():
-            print(serializer.data)
-            ansible_setup.delay(serializer.data)
+            chain(ansible_setup.s(serializer.data)
+                   | install_docker.s()).delay()
             return Response(status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
@@ -100,7 +101,8 @@ def test_serializer(request):
         serializer = AnsiblePlaybookSerializer(data=request.data)
 
         if serializer.is_valid():
-            print(serializer.data)
+            serializer.save()
+
             return Response(status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
