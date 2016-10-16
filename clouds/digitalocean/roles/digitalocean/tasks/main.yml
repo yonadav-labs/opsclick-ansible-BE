@@ -1,12 +1,14 @@
 ---
 - name: ensure key exists at DigitalOcean
   digital_ocean: 
-    state: present
+    state: "{{ state }}"
     command: ssh
-    name: test_ssh_key
-    ssh_pub_key: "{{ ssh_pub_key }}"
+    name: "{{ item.name }}"
+    ssh_pub_key: "{{ item.key }}"
     api_token: "{{ do_token }}"
+  with_items: "{{ ssh_pub_keys }}"
   register: my_ssh_key
+  ignore_errors: yes
 
 - name: ensure the new droplet exists
   digital_ocean: 
@@ -16,9 +18,11 @@
     size_id: "{{ size }}"
     region_id: "{{ region }}"
     image_id: "{{ image }}"
-    ssh_key_ids: "{{ my_ssh_key.ssh_key.id }}"
+    ssh_key_ids: "{{ my_ssh_key.results | map(attribute='ssh_key') | map(attribute='id') | list | join(',') }}"
     api_token: "{{ do_token }}"
     unique_name: yes
-  with_items: "{{ droplets }}"
+  with_items:
+    - "{{ droplets }}"
   register: droplet_details
-
+  ignore_errors: yes
+  

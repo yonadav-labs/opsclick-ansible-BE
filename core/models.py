@@ -28,7 +28,7 @@ class AnsiblePlaybook(Document):
 class Options(EmbeddedDocument):
     access_key = fields.StringField()
     droplets = fields.ListField(fields.StringField(required=False))
-    ssh_pub_key = fields.StringField()
+    ssh_pub_keys = fields.ListField(fields.DictField())
     size = fields.StringField()
     region = fields.StringField()
     image = fields.StringField()

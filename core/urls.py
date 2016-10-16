@@ -20,7 +20,8 @@ digitalocean_patterns = ([
 ], 'digitalocean')
 
 aws_patterns = ([
-    url(r'^images$', aws.distribution_images, name='aws images list'),
+    url(r'^instance_types$', aws.instance_types, name='aws instance types list'),
+    url(r'^regions$', aws.regions, name='aws regions list'),
 ], 'aws')
 
 urlpatterns = [

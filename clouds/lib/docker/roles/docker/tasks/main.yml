@@ -1,0 +1,37 @@
+---
+- name: Check if Docker is installed Debian
+  shell: dpkg-query -l docker-engine
+  register: deb_is_installed
+  ignore_errors: yes
+  changed_when: no
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker
+  shell: wget -qO- https://get.docker.com/ | sudo sh
+  when: deb_is_installed|failed 
+
+#- name: Install Docker Compose
+#  get_url:
+#    url: https://github.com/docker/compose/releases/download/1.5.2/docker-compose-Linux-x86_64
+#    dest: /usr/local/bin/docker-compose
+#    mode: 0755
+#  become: true
+#  when: deb_is_installed|failed or rpm_is_installed|failed
+
+- name: Enable Docker on reboot
+  service: name=docker state=started enabled=yes 
+
+- name: Install pip
+  apt:
+    name: python-pip
+    state: present
+    update-cache: yes
+  when: ansible_os_family == "Debian"
+
+- name: Install Docker API for containers orchestation
+  pip:
+    name: docker-py
+    version: 1.9
+    state: present
+  when: ansible_os_family == "Debian"
+

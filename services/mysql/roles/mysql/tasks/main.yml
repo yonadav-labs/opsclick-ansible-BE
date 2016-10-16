@@ -1,0 +1,10 @@
+---
+- name: Create a mysql container
+  docker_container:
+    name: mysqldb
+    image: mysql
+    state: started
+    ports:
+      - 3306:3306
+    env:
+      MYSQL_ROOT_PASSWORD: 123321...
