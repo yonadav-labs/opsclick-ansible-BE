@@ -6,7 +6,7 @@ from core.serializers import ServiceSerializer, UserSerializer, SetupSerializer,
 from core.tasks import running_setup
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
-
+from . import clouds
 
 @api_view(['GET', 'POST'])
 def index(request):
@@ -55,6 +55,26 @@ def service_detail(request, service_name):
     if request.method == 'DELETE':
         pass
 
+@api_view(['GET'])
+def clouds_info(request):
+    if request.method == 'GET':
+        access_key = request.META.get('HTTP_ACCESS_KEY')
+        secret_key = request.META.get('HTTP_SECRET_KEY')
+        cloud_name = request.META.get('HTTP_CLOUD')
+        try:
+            cloud_class = getattr(clouds, cloud_name)
+        except AttributeError as err:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        except TypeError as err:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        cloud = cloud_class((access_key, secret_key))
+        try:
+            data = cloud.get_cloud_info(request.query_params)
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(data, status=status.HTTP_200_OK)
 
 """
 @api {post} /setup Setup a cloud with Service

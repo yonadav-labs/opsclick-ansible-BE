@@ -1,5 +1,4 @@
 from django.db import models
-from rest_framework.authtoken.models import Token
 from django.conf import settings
 from django_mongoengine import Document, fields, EmbeddedDocument
 from datetime import datetime
@@ -10,7 +9,10 @@ class User(Document):
     token = fields.StringField(max_length=128)
 
 class Service(Document):
-    name = fields.StringField(max_length=50)
+    name = fields.StringField()
+
+class Cloud(Document):
+    name = fields.StringField()
 
 class AnsibleTask(EmbeddedDocument):
     hosts = fields.DictField()
