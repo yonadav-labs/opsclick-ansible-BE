@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
 
-from core.models import User, Service, Setup, Options, AnsiblePlaybook, AnsiblePlay, AnsibleTask
+from core.models import User, Addon, Setup, Options, AnsiblePlaybook, AnsiblePlay, AnsibleTask
 
 class UserSerializer(serializers.Serializer):
     username = serializers.CharField()
@@ -17,21 +17,26 @@ class UserSerializer(serializers.Serializer):
         instance.save()
         return instance
 
-class ServiceSerializer(serializers.Serializer):
-    name = serializers.CharField()
+
+class AddonSerializer(DocumentSerializer):
+    class Meta:
+        model = Addon
+        fields = '__all__'
 
     def create(self, validated_data):
-        return Service.objects.create(**validated_data)
+        return Addon.objects.create(**validated_data)
 
     def update(self, instance, validated_data):
         instance.name = validated_data.get('name', instance.name)
         instance.save()
         return instance
 
+
 class AnsibleTaskSerializer(EmbeddedDocumentSerializer):
     class Meta:
         model = AnsibleTask
         fields = ('hosts', 'task')
+
 
 class AnsiblePlaySerializer(EmbeddedDocumentSerializer):
     tasks = AnsibleTaskSerializer(many=True)
@@ -39,6 +44,7 @@ class AnsiblePlaySerializer(EmbeddedDocumentSerializer):
     class Meta:
         model = AnsiblePlay
         fields = ('play', 'tasks')
+
 
 class AnsiblePlaybookSerializer(DocumentSerializer):
     plays = AnsiblePlaySerializer(many=True)
@@ -50,10 +56,12 @@ class AnsiblePlaybookSerializer(DocumentSerializer):
         model = AnsiblePlaybook
         fields = ('plays', 'stats')
 
+
 class OptionsSerializer(EmbeddedDocumentSerializer):
     class Meta:
         model = Options
         fields = '__all__'
+
 
 class SetupSerializer(DocumentSerializer):
     options = OptionsSerializer(many=False)

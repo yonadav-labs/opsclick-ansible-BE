@@ -8,11 +8,14 @@ class User(Document):
     password = fields.StringField(max_length=20)
     token = fields.StringField(max_length=128)
 
-class Service(Document):
-    name = fields.StringField()
-
-class Cloud(Document):
-    name = fields.StringField()
+class Addon(Document):
+    name = fields.StringField(unique_with=['type', 'version'])
+    type = fields.StringField(choices=('cloud', 'service'))
+    category = fields.StringField()
+    author = fields.StringField()
+    version = fields.StringField()
+    depends = fields.ListField(fields.StringField(required=False), default=['core'])
+    clouds = fields.ListField(fields.StringField(required=False), default=['core'])
 
 class AnsibleTask(EmbeddedDocument):
     hosts = fields.DictField()

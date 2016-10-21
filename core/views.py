@@ -1,8 +1,8 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from core.models import User, Service, Setup
-from core.serializers import ServiceSerializer, UserSerializer, SetupSerializer, AnsiblePlaybookSerializer
+from core.models import User, Addon, Setup
+from core.serializers import AddonSerializer, UserSerializer, SetupSerializer, AnsiblePlaybookSerializer
 from core.tasks import running_setup
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
@@ -25,28 +25,25 @@ def index(request):
 
 @api_view(['GET', 'POST'])
 def service_list(request):
+
     if request.method == 'GET':
-        services = Service.objects.all()
-        serializer = ServiceSerializer(services, many=True)
+        try:
+            services = Addon.objects(type__exact='service')
+        except Addon.DoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        serializer = AddonSerializer(services, many=True)
         return Response(serializer.data)
-
-    if request.method == 'POST':
-        serializer = ServiceSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
 
 @api_view(['GET'])
 def service_detail(request, service_name):
     try:
-        service = Service.objects.get(name=service_name)
-    except Service.DoesNotExist:
+        service = Addon.objects.get(name=service_name)
+    except Addon.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     if request.method == 'GET':
-        serializer = ServiceSerializer(service)
+        serializer = AddonSerializer(service)
         return Response(serializer.data)
 
     if request.method == 'PUT':
@@ -77,7 +74,7 @@ def clouds_info(request):
         return Response(data, status=status.HTTP_200_OK)
 
 """
-@api {post} /setup Setup a cloud with Service
+@api {post} /setup Setup a cloud with Addon
 @apiName PostSetup
 @apiGroup Core
 

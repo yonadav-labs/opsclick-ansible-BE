@@ -1,7 +1,9 @@
 {
     'name': 'mysql',
-    'version': '0.1',
+    'type': 'service',
     'author': 'Luis Alfredo da Silva',
+    'version': '0.1',
+    'category': 'Database',
     'clouds': [
         'digitalocean',
     ],
