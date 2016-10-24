@@ -33,12 +33,13 @@ class AnsiblePlaybook(Document):
 
 class Options(EmbeddedDocument):
     access_key = fields.StringField()
-    droplets = fields.ListField(fields.StringField(required=False))
+    droplets = fields.ListField(fields.StringField())
     ssh_pub_keys = fields.ListField(fields.DictField())
     size = fields.StringField()
     region = fields.StringField()
     image = fields.StringField()
     state = fields.StringField()
+    service_opts = fields.DictField(default={'core': 'core'})
 
 class Setup(Document):
     service = fields.StringField(max_length=50)

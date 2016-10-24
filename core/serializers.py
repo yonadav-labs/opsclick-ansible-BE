@@ -1,21 +1,21 @@
-from rest_framework import serializers
+#from rest_framework import serializers
 from rest_framework_mongoengine.serializers import DocumentSerializer, EmbeddedDocumentSerializer
-
+from django_mongoengine import fields
 from core.models import User, Addon, Setup, Options, AnsiblePlaybook, AnsiblePlay, AnsibleTask
 
-class UserSerializer(serializers.Serializer):
-    username = serializers.CharField()
-    password = serializers.CharField()
-    token = serializers.CharField(required=False)
+# class UserSerializer(serializers.Serializer):
+#     username = serializers.CharField()
+#     password = serializers.CharField()
+#     token = serializers.CharField(required=False)
 
-    def create(self, validated_data):
-        return User.objects.create(**validated_data)
+#     def create(self, validated_data):
+#         return User.objects.create(**validated_data)
 
-    def update(self, instance, validated_data):
-        instance.title = validated_data.get('username', instance.title)
-        instance.code = validated_data.get('password', instance.code)
-        instance.save()
-        return instance
+#     def update(self, instance, validated_data):
+#         instance.title = validated_data.get('username', instance.title)
+#         instance.code = validated_data.get('password', instance.code)
+#         instance.save()
+#         return instance
 
 
 class AddonSerializer(DocumentSerializer):
@@ -58,6 +58,8 @@ class AnsiblePlaybookSerializer(DocumentSerializer):
 
 
 class OptionsSerializer(EmbeddedDocumentSerializer):
+    service_opts = fields.DictField(required=False)
+
     class Meta:
         model = Options
         fields = '__all__'

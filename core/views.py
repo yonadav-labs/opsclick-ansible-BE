@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from core.models import User, Addon, Setup
-from core.serializers import AddonSerializer, UserSerializer, SetupSerializer, AnsiblePlaybookSerializer
+from core.serializers import AddonSerializer, SetupSerializer, AnsiblePlaybookSerializer
 from core.tasks import running_setup
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
@@ -69,7 +69,7 @@ def clouds_info(request):
         return Response(data, status=status.HTTP_200_OK)
 
 @api_view(['GET'])
-def cloud_fields(request, cloud_name):
+def cloud_detail(request, cloud_name):
     try:
         cloud = Addon.objects.get(name=cloud_name)
     except Addon.DoesNotExist:
