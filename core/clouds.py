@@ -18,6 +18,9 @@ class Cloud(metaclass=ABCMeta):
     @abstractmethod
     def get_cloud_info(self):
         pass
+    @abstractmethod
+    def get_assets(self):
+        pass
 
 
 class DigitalOcean(Cloud):
@@ -56,6 +59,11 @@ class DigitalOcean(Cloud):
             return sizes
         return False
 
+    def get_assets(self):
+        droplets = self.do_session.all_active_droplets()
+        if droplets:
+            return droplets
+        return False
 
 class AWS(Cloud):
 
@@ -94,3 +102,6 @@ class AWS(Cloud):
     def get_regions(self):
         data = self.aws_session.get_available_regions('ec2', partition_name='aws')
         return data
+
+    def get_assets(self):
+        pass

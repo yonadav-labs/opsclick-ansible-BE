@@ -30,7 +30,8 @@ def generate_ssh_key(username, cloud, service, name):
 
 def running_setup(data):
     chain = ansible_setup.s(data) | install_docker.s() | install_service.s(data['service'])
-    chain()
+    res = chain()
+    return res
 
 @shared_task
 def ansible_setup(data=None):

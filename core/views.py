@@ -104,12 +104,24 @@ def setup_service(request):
         serializer = SetupSerializer(data=request.data)
 
         if serializer.is_valid():
-            running_setup(serializer.data)
-            return Response(status=status.HTTP_201_CREATED)
+            res = running_setup(serializer.data)
+            output = {
+                'task_id': res.id
+            }
+            return Response(output, status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET'])
+def task_status(request):
+    if request.method == 'GET':
+        task_id = request.META.get('HTTP_TASK_ID')
+        if task_id:
+            from celery.result import AsyncResult
+            task = AsyncResult(str(task_id))
+            return Response(task.state, status.HTTP_200_OK)
+        return Response(status.HTTP_400_BAD_REQUEST)
 
 @api_view(['POST'])
 def test_serializer(request):
@@ -123,3 +135,33 @@ def test_serializer(request):
         else:
             print(serializer.errors)
             return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_assets(request):
+    if request.method == 'GET':
+        access_key = request.META.get('HTTP_ACCESS_KEY')
+        secret_key = request.META.get('HTTP_SECRET_KEY')
+        cloud_name = request.META.get('HTTP_CLOUD')
+
+        try:
+            cloud_class = getattr(clouds, cloud_name)
+        except AttributeError as err:
+            return Response(status=status.HTTP_406_NOT_ACCEPTABLE)
+        except TypeError as err:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        cloud = cloud_class((access_key, secret_key))
+        try:
+            data = cloud.get_assets()
+        except:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def get_jobs(request):
+    if request.method == 'GET':
+        username = request.META.get('HTTP_USERNAME')
+        if not username:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        return Response(status=status.HTTP_200_OK)

@@ -9,12 +9,15 @@ service_patterns = ([
 
 setup_patterns = ([
     url(r'^$', views.setup_service, name='setup_service'),
+    url(r'^/status$', views.task_status, name='task_status')
 ], 'setup')
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^service', include(service_patterns)),
-    url(r'^clouds', views.clouds_info, name='cloud information'),
+    url(r'^clouds$', views.clouds_info, name='cloud information'),
+    url(r'^clouds/assets$', views.get_assets, name='cloud assets information'),
     url(r'^setup', include(setup_patterns)),
     url(r'^test_serializer', views.test_serializer, name='endpoint to test serializers'),
+    url(r'^jobs$', views.get_jobs, name='get jobs'),
 ]
