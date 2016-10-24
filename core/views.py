@@ -98,7 +98,10 @@ def cloud_fields(request, cloud_name):
 		"size": "512mb",
 		"image": "ubuntu-14-04-x64",
 		"region": "sgp1",
-		"ssh_pub_key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMhY7Lp2uN5yH0qv9o6d3EuBmBm9xZ9STxFo/negDSOMV2p2zRdkw1JuUurVFVx+8JgWg25/kMKOJmR01Ri928CAoOsFzxV9qqPlRXuOsTqim6g4+YdLnwci5SsJ7Ek7XYAtZXvdXUV2R8xtHX9HUz3Wv1kfFYmRzz5VzSGk7OS5Ov5p03j6sggUjkrgJo2ho105jVaeYPLL7o17Y3e4gtx6aZo93DMEeXm17VCYS3Gy7Wrka4+e4LKHHQu8coIPS9WXuC+rwQjZJzujSj5FKWhujUagZvwHxr+Sh2uzJ86PZSZla3+o2KpZvoDIzZ85Sa4X4UTE2tb9WuYAKryhNde",
+		"ssh_pub_key": [{
+			"name": "user",
+			"key": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDMhY7Lp2uN5yH0qv9o6d3EuBmBm9xZ9STxFo/negDSOMV2p2zRdkw1JuUurVFVx+8JgWg25/kMKOJmR01Ri928CAoOsFzxV9qqPlRXuOsTqim6g4+YdLnwci5SsJ7Ek7XYAtZXvdXUV2R8xtHX9HUz3Wv1kfFYmRzz5VzSGk7OS5Ov5p03j6sggUjkrgJo2ho105jVaeYPLL7o17Y3e4gtx6aZo93DMEeXm17VCYS3Gy7Wrka4+e4LKHHQu8coIPS9WXuC+rwQjZJzujSj5FKWhujUagZvwHxr+Sh2uzJ86PZSZla3+o2KpZvoDIzZ85Sa4X4UTE2tb9WuYAKryhNd ansible-generated on xyklexwifi.oficina.ongen.com.ve"
+			}],
 		"access_key":"71b1ebc1e0c4a233c917276cf1f6bd5cd54dd3433c07bdcb9924cc98cd917886"
 	}
     }
