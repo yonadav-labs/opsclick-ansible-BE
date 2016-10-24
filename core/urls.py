@@ -4,7 +4,7 @@ from . import views
 
 service_patterns = ([
     url(r'^$', views.service_list, name='service_list'),
-    url(r'^/(?P<service_name>[\w-]+)$', views.service_detail, name='service_detail')
+    url(r'^/(?P<service_name>[\w-]+)$', views.service_fields, name='service_detail'),
 ], 'service')
 
 setup_patterns = ([
@@ -15,6 +15,7 @@ setup_patterns = ([
 urlpatterns = [
     url(r'^$', views.index, name='index'),
     url(r'^service', include(service_patterns)),
+    url(r'^cloud/fields/(?P<cloud_name>[\w\W]+)$', views.cloud_fields, name='cloud fields'),
     url(r'^clouds$', views.clouds_info, name='cloud information'),
     url(r'^clouds/assets$', views.get_assets, name='cloud assets information'),
     url(r'^setup', include(setup_patterns)),

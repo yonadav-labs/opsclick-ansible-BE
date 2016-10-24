@@ -36,7 +36,7 @@ def service_list(request):
         return Response(serializer.data)
 
 @api_view(['GET'])
-def service_detail(request, service_name):
+def service_fields(request, service_name):
     try:
         service = Addon.objects.get(name=service_name)
     except Addon.DoesNotExist:
@@ -44,13 +44,8 @@ def service_detail(request, service_name):
 
     if request.method == 'GET':
         serializer = AddonSerializer(service)
-        return Response(serializer.data)
+        return Response(serializer.data['fields'], status.HTTP_200_OK)
 
-    if request.method == 'PUT':
-        pass
-
-    if request.method == 'DELETE':
-        pass
 
 @api_view(['GET'])
 def clouds_info(request):
@@ -72,6 +67,17 @@ def clouds_info(request):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         return Response(data, status=status.HTTP_200_OK)
+
+@api_view(['GET'])
+def cloud_fields(request, cloud_name):
+    try:
+        cloud = Addon.objects.get(name=cloud_name)
+    except Addon.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+
+    if request.method == 'GET':
+        serializer = AddonSerializer(cloud)
+        return Response(serializer.data['fields'], status.HTTP_200_OK)
 
 """
 @api {post} /setup Setup a cloud with Addon

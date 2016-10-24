@@ -7,4 +7,5 @@
     'clouds': [
         'digitalocean',
     ],
+    'fields': ['root_pass']
 }
