@@ -29,7 +29,8 @@ def generate_ssh_key(username, cloud, service, name):
     return priv_key_path
 
 def running_setup(data):
-    chain = ansible_setup.s(data) | install_docker.s() | install_service.s(data['service'])
+
+    chain = ansible_setup.s(data) | install_docker.s().set(countdown=5) | install_service.s(data['service'],conf_vars=data['options']['service_opts'])
     res = chain()
     return res
 
@@ -53,10 +54,12 @@ def ansible_setup(data=None):
 
     if service and cloud:
         logger.debug("configuring the cloud %s" % (cloud))
+        options.pop('service_opts')
         command = ['ansible-playbook', cloud_playbook, '-i', cloud_host, '--extra-vars', str(options)] 
         logger.debug(" ".join(command))
 
         env['ANSIBLE_CONFIG'] = cloud_path + "/ansible.cfg"
+        logger.info(command)
         ansible_call = Popen(command, stdout=PIPE, env=env)
         try:
             output, errs = ansible_call.communicate()
@@ -80,13 +83,14 @@ def ansible_setup(data=None):
             pb_instance = pb_serializer.save()
             data['playbook'] = pb_instance.id
 
-            setup = Setup(service=service,
+            setup = Setup(user=data['user'],
+                          service=service,
                           cloud=cloud,
-                          options=options,
+                          options=data['options'],
                           playbook=data['playbook'])
             setup.save()
 
-            code = """
+        code = """
         function() {
             var droplets_ip = []
             db[collection].find(query).forEach(function(doc) {
@@ -104,7 +108,7 @@ def ansible_setup(data=None):
             });
             if(droplets_ip.length > 0){
                 return droplets_ip;
-            } 
+            }
             return false;
         }
         """

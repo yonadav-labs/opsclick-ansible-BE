@@ -73,5 +73,5 @@ class SetupSerializer(DocumentSerializer):
 
     class Meta:
         model = Setup
-        fields = ('service', 'cloud', 'options')
+        fields = ('user', 'service', 'cloud', 'options')
 

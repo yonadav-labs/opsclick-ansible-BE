@@ -160,7 +160,11 @@ def get_assets(request):
 @api_view(['GET'])
 def get_jobs(request):
     if request.method == 'GET':
-        username = request.META.get('HTTP_USERNAME')
-        if not username:
-            return Response(status=status.HTTP_400_BAD_REQUEST)
-        return Response(status=status.HTTP_200_OK)
+        user = request.META.get('HTTP_USER')
+
+        if user:
+            queryset = Setup.objects.filter(user=user)[:10]
+            return Response(queryset.to_json(), status=status.HTTP_200_OK)
+
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+

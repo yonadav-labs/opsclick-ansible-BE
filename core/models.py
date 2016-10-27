@@ -42,6 +42,7 @@ class Options(EmbeddedDocument):
     service_opts = fields.DictField(default={'core': 'core'})
 
 class Setup(Document):
+    user = fields.StringField(max_length=50)
     service = fields.StringField(max_length=50)
     cloud = fields.StringField(max_length=50)
     options = fields.EmbeddedDocumentField(Options, required=False)
