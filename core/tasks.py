@@ -38,9 +38,9 @@ def running_setup(data):
 def ansible_setup(data=None):
     if not data:
         return
-    (service, cloud, options) = data['service'], data['cloud'], data['options']
+    (user, service, cloud, options) = data['user'], data['service'], data['cloud'], data['options']
 
-    private_ssh_key = generate_ssh_key("test", cloud, service, "test1")
+    private_ssh_key = generate_ssh_key(user, cloud, service, "test1")
     key_file = open(private_ssh_key + ".pub", "r")
     ssh_key = key_file.readline().strip('\n')
     key_file.close()

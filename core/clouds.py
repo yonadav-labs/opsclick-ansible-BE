@@ -42,7 +42,8 @@ class DigitalOcean(Cloud):
         return vals
 
     def get_distribution_images(self, params):
-        data = self.do_session.all_images(params)
+        #data = self.do_session.all_images(params)
+        data = ['ubuntu-14-04-x64']
         if data:
             return data
         return False

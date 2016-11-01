@@ -32,6 +32,7 @@ class CoreConfig(AppConfig):
         addon = Addon.objects(name__exact=info['name'],
                               type__exact=info['type'],
                               version__exact=info['version'])
+
         if not addon:
             serializer = AddonSerializer(data=info)
 

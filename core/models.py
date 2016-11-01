@@ -16,7 +16,7 @@ class Addon(Document):
     version = fields.StringField()
     depends = fields.ListField(fields.StringField(required=False), default=['core'])
     clouds = fields.ListField(fields.StringField(required=False), default=['core'])
-    fields = fields.ListField(fields.StringField())
+    fields = fields.ListField(fields.DictField())
 
 class AnsibleTask(EmbeddedDocument):
     hosts = fields.DictField()

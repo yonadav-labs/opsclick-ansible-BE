@@ -8,12 +8,32 @@
         'digitalocean',
     ],
     'fields': [
-            # (required, required, required, optional)
-            # ('ansible_variable_name', 'text to show in UI', 'field type', 'default value')
-            ('root_pass', 'Root password', 'Password'),
-            ('port', 'Mysql port', 'Number', 3306),
-            ('db_name', 'Database name', 'String'),
-            ('db_user', 'Database username', 'String'),
-            ('db_pass', 'Database username password', 'Password')
+        {
+            'name': 'root_pass',
+            'label': 'Root password',
+            'type': 'Password',
+        },
+        {
+            'name': 'port',
+            'label': 'Mysql port',
+            'type': 'Number',
+            'default': 3306
+        },
+        {
+            'name': 'db_name',
+            'label': 'Database name',
+            'type': 'String',
+        },
+        {
+            'name': 'db_user',
+            'label': 'Database user',
+            'type': 'String',
+        },
+        {
+            'name': 'db_pass',
+            'label': 'Database user password',
+            'type': 'Password',
+        },
+
     ]
 }

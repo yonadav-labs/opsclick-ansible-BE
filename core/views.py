@@ -100,6 +100,7 @@ def cloud_detail(request, cloud_name):
 @api_view(['POST'])
 def setup_service(request):
     if request.method == 'POST':
+        request.data['state'] = 'present'
         serializer = SetupSerializer(data=request.data)
 
         if serializer.is_valid():
