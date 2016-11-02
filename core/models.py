@@ -18,6 +18,12 @@ class Addon(Document):
     clouds = fields.ListField(fields.StringField(required=False), default=['core'])
     fields = fields.ListField(fields.DictField())
 
+class Key(Document):
+    user = fields.StringField()
+    cloud = fields.StringField()
+    private = fields.StringField()
+    public = fields.StringField()
+
 class AnsibleTask(EmbeddedDocument):
     hosts = fields.DictField()
     task = fields.DictField()
@@ -47,3 +53,4 @@ class Setup(Document):
     cloud = fields.StringField(max_length=50)
     options = fields.EmbeddedDocumentField(Options, required=False)
     playbook = fields.ObjectIdField()
+    key_id = fields.ObjectIdField()
