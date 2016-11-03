@@ -6,6 +6,7 @@ from core.serializers import AddonSerializer, SetupSerializer, AnsiblePlaybookSe
 from core.tasks import running_setup
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
+import mongoengine
 from . import clouds
 
 @api_view(['GET', 'POST'])
@@ -105,10 +106,8 @@ def setup_service(request):
 
         if serializer.is_valid():
             res = running_setup(serializer.data)
-            output = {
-                'task_id': res.id
-            }
-            return Response(output, status=status.HTTP_201_CREATED)
+
+            return Response(res, status=status.HTTP_201_CREATED)
         else:
             print(serializer.errors)
             return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -163,9 +162,29 @@ def get_jobs(request):
     if request.method == 'GET':
         user = request.META.get('HTTP_USER')
 
+        fields = [
+
+        ]
         if user:
-            queryset = Setup.objects.filter(user=user)[:10]
+            queryset = Setup.objects.filter(user=user) \
+                                    .only('options.size',
+                                          'options.image',
+                                          'options.region',
+                                          'options.service_opts',
+                                          'cloud',
+                                          'service',
+                                          'status')
             return Response(queryset.to_json(), status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET'])
+def get_setup_status(request, setup_id):
+    if request.method == 'GET':
+        try:
+            job = Setup.objects.get(id=setup_id)
+            return Response(job.status, status.HTTP_200_OK)
+        except mongoengine.errors.DoesNotExist:
+            return Response("The job does not exist", status.HTTP_404_NOT_FOUND)
+
 

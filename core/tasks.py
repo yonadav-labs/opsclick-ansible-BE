@@ -14,28 +14,32 @@ from os.path import isfile
 import hashlib
 import base64
 import mongoengine
+import stat
 
 logger = get_task_logger(__name__)
 env = os.environ
 
 @shared_task
-def generate_ssh_key(user, cloud):
+def generate_ssh_key(setup_id, user, cloud):
+    setup = Setup.objects.get(id=setup_id)
+
+    key_instance = None
+    priv_key_path = ""
     try:
-        key = Key.objects.get(user=user, cloud=cloud)
+        key_instance = Key.objects.get(user=user, cloud=cloud)
         filename = base64.b64encode(hashlib.new('md5').digest()).decode('utf-8')
-        priv_key_path = "/root/.ssh/{0}".format(filename)
+        priv_key_path = "/tmp/{0}".format(filename)
 
-        key_private = open(priv_key_path, 'w')
-        key_public = open(priv_key_path + '.pub', 'w')
+        key_private = open(priv_key_path, 'w+')
+        key_public = open(priv_key_path + '.pub', 'w+')
 
-        key_private.write(key.private)
+        key_private.write(key_instance.private)
         key_private.close()
 
-        key_public.write(key.public)
+        key_public.write(key_instance.public)
         key_public.close()
 
         os.chmod(priv_key_path, stat.S_IRUSR)
-        return priv_key_path, str(key.id)
 
     except mongoengine.errors.DoesNotExist:
         filename = base64.b64encode(hashlib.new('md5').digest()).decode('utf-8')
@@ -63,24 +67,39 @@ def generate_ssh_key(user, cloud):
                   public=key_public_data)
         key_instance = key.save()
 
-        return priv_key_path, str(key_instance.id)
+    if key_instance:
+        setup.update(key_id=key_instance.id)
+    return priv_key_path
 
 
 def running_setup(data):
-    res = chain(generate_ssh_key.s(data['user'], data['cloud']),
-                ansible_setup.s(data),
-                install_docker.s().set(countdown=5),
-                install_service.s(data['service'],
+    info = {
+        'user': data['user'],
+        'service': data['service'],
+        'cloud': data['cloud'],
+        'options': data['options'],
+        'status': "Running"
+    }
+    setup = Setup(**info)
+    setup_id = str((setup.save()).id)
+
+    res = chain(generate_ssh_key.s(setup_id, data['user'], data['cloud']),
+                ansible_setup.s(setup_id, data),
+                install_docker.s(setup_id).set(countdown=5),
+                install_service.s(setup_id, data['service'],
                                   conf_vars=data['options']['service_opts']))()
-    return res
+    return setup_id
 
 @shared_task
-def ansible_setup(info, data=None):
-    (ssh_key_path, key_id) = info
+def ansible_setup(info, setup_id, data=None):
+    ssh_key_path = info
+    setup = Setup.objects.get(id=setup_id)
 
     if not data:
         return
     (user, service, cloud, options) = data['user'], data['service'], data['cloud'], data['options']
+
+    setup.update(status="Installing Server")
 
     key_file = open(ssh_key_path + ".pub", "r")
     ssh_key = key_file.readline().strip('\n')
@@ -100,7 +119,7 @@ def ansible_setup(info, data=None):
         logger.debug(" ".join(command))
 
         env['ANSIBLE_CONFIG'] = cloud_path + "/ansible.cfg"
-        logger.info(command)
+        #logger.info(command)
         ansible_call = Popen(command, stdout=PIPE, env=env)
         try:
             output, errs = ansible_call.communicate()
@@ -122,15 +141,8 @@ def ansible_setup(info, data=None):
 
         if pb_serializer.is_valid():
             pb_instance = pb_serializer.save()
-            data['playbook'] = pb_instance.id
-
-            setup = Setup(user=data['user'],
-                          service=service,
-                          cloud=cloud,
-                          options=data['options'],
-                          playbook=data['playbook'],
-                          key_id=key_id)
-            setup.save()
+            if pb_instance:
+                setup.update(playbook=pb_instance.id)
 
         code = """
         function() {
@@ -161,7 +173,10 @@ def ansible_setup(info, data=None):
         logger.warn("We need to know the service and the cloud")
 
 @shared_task
-def install_service(info, service, conf_vars={}):
+def install_service(info, setup_id,  service, conf_vars={}):
+    setup = Setup.objects.get(id=setup_id)
+    setup.update(status="Installing application")
+
     try:
         ssh_key_path, hosts = info
     except TypeError as err:
@@ -175,7 +190,7 @@ def install_service(info, service, conf_vars={}):
     command = ['ansible-playbook', service_playbook, '-i', hosts, "--private-key", ssh_key_path, "--extra-vars", str(conf_vars)]
     ansible_call = Popen(command, stdout=PIPE, env=env)
 
-    logger.info(command)
+    #logger.info(command)
     try:
         output, errs = ansible_call.communicate()
     except:
@@ -188,11 +203,17 @@ def install_service(info, service, conf_vars={}):
     outfile.close()
 
     if ansible_call.returncode == 0:
+        setup.update(status="DONE")
         return True
+
+    setup.update(status="Error in setup")
     return False
 
 @shared_task
-def install_docker(info):
+def install_docker(info, setup_id):
+    setup = Setup.objects.get(id=setup_id)
+    setup.update(status="Preparing server for the application")
+
     try:
         ssh_key_path, hosts = info
     except TypeError as err:
@@ -200,7 +221,7 @@ def install_docker(info):
         return
 
     if not hosts:
-        logger.info("You need to define the hosts")
+        logger.error("You need to define the hosts")
         return
 
     docker_path = "{0}/clouds/lib/{1}".format(BASE_DIR, "docker")
@@ -222,7 +243,7 @@ def install_docker(info):
     command = ['ansible-playbook', docker_playbook, '-i', hosts.name, "--private-key", ssh_key_path]
     ansible_call = Popen(command, stdout=PIPE, env=env)
 
-    logger.info(command)
+    #logger.info(command)
     try:
         output, errs = ansible_call.communicate()
     except:

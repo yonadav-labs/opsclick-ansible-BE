@@ -14,8 +14,8 @@ class Addon(Document):
     category = fields.StringField()
     author = fields.StringField()
     version = fields.StringField()
-    depends = fields.ListField(fields.StringField(required=False), default=['core'])
-    clouds = fields.ListField(fields.StringField(required=False), default=['core'])
+    depends = fields.ListField(fields.StringField(blank=True), default=['core'])
+    clouds = fields.ListField(fields.StringField(blank=True), default=['core'])
     fields = fields.ListField(fields.DictField())
 
 class Key(Document):
@@ -30,10 +30,10 @@ class AnsibleTask(EmbeddedDocument):
 
 class AnsiblePlay(EmbeddedDocument):
     play = fields.DictField()
-    tasks = fields.ListField(fields.EmbeddedDocumentField(AnsibleTask, required=False))
+    tasks = fields.ListField(fields.EmbeddedDocumentField(AnsibleTask, blank=True))
 
 class AnsiblePlaybook(Document):
-    plays = fields.ListField(fields.EmbeddedDocumentField(AnsiblePlay, required=False))
+    plays = fields.ListField(fields.EmbeddedDocumentField(AnsiblePlay, blank=True))
     stats = fields.DictField()
     created_at = fields.DateTimeField(default=datetime.now)
 
@@ -51,6 +51,7 @@ class Setup(Document):
     user = fields.StringField(max_length=50)
     service = fields.StringField(max_length=50)
     cloud = fields.StringField(max_length=50)
-    options = fields.EmbeddedDocumentField(Options, required=False)
-    playbook = fields.ObjectIdField()
-    key_id = fields.ObjectIdField()
+    options = fields.EmbeddedDocumentField(Options, blank=True)
+    playbook = fields.ObjectIdField(blank=True)
+    key_id = fields.ObjectIdField(blank=True)
+    status = fields.StringField()

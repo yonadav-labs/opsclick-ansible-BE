@@ -75,15 +75,25 @@ REDIS_HOST = 'redis'
 # Celery configuration
 BROKER_URL = 'redis://redis:6379/0'
 
-CELERY_DEFAULT_QUEUE = 'default'  
-CELERY_QUEUES = (  
+CELERY_DEFAULT_QUEUE = 'default'
+CELERY_QUEUES = (
     Queue('default', Exchange('default'), routing_key='default'),
 )
-CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)  
+#CELERY_RESULT_BACKEND = 'redis://%s:%d/%d' % (REDIS_HOST, REDIS_PORT, REDIS_DB)  
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_RESULT_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'pickle'
 
+CELERY_RESULT_BACKEND = 'mongodb://mongo:27017/'
+
+CELERY_MONGODB_BACKEND_SETTINGS = {
+    'database': 'opsclick-api-deploy',
+    'taskmeta_collection': 'tasks',
+    'options': {
+        'connect': False
+    }
+
+}
 APPEND_SLASH=False
 
 MIDDLEWARE = [

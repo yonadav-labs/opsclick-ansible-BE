@@ -21,4 +21,5 @@ urlpatterns = [
     url(r'^setup', include(setup_patterns)),
     url(r'^test_serializer', views.test_serializer, name='endpoint to test serializers'),
     url(r'^jobs$', views.get_jobs, name='get jobs'),
+    url(r'^job/(?P<setup_id>[\w]+)$', views.get_setup_status, name='get job status')
 ]
