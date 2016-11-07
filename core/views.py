@@ -1,13 +1,14 @@
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from core.models import User, Addon, Setup
+from core.models import User, Addon, Setup, AnsiblePlaybook
 from core.serializers import AddonSerializer, SetupSerializer, AnsiblePlaybookSerializer
 from core.tasks import running_setup
 from django.contrib.auth import authenticate
 from django_mongoengine.mongo_auth.models import MongoUser
 import mongoengine
 from . import clouds
+import json
 
 @api_view(['GET', 'POST'])
 def index(request):
@@ -167,14 +168,24 @@ def get_jobs(request):
         ]
         if user:
             queryset = Setup.objects.filter(user=user) \
-                                    .only('options.size',
+                                    .only('id',
+                                          'options.size',
                                           'options.image',
                                           'options.region',
                                           'options.service_opts',
+                                          'playbook',
                                           'cloud',
                                           'service',
                                           'status')
-            return Response(queryset.to_json(), status=status.HTTP_200_OK)
+            docs = json.loads(queryset.to_json())
+            # print(docs)
+            for doc in docs:
+                play = AnsiblePlaybook.objects.filter(id=doc['playbook']['$oid'])
+#                                              .only('plays')
+
+                doc['playbook'] = json.loads(play.to_json())[0]
+
+            return Response(docs, status=status.HTTP_200_OK)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 

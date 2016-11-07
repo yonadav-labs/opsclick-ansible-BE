@@ -68,7 +68,7 @@ def generate_ssh_key(setup_id, user, cloud):
         key_instance = key.save()
 
     if key_instance:
-        setup.update(key_id=key_instance.id)
+        setup.update(key_id=key_instance)
     return priv_key_path
 
 
@@ -127,10 +127,6 @@ def ansible_setup(info, setup_id, data=None):
             logger.warn("something wrong with the ansible call")
             return
 
-        outfile = open("/tmp/output.ansible", "w")
-        outfile.write(output.decode("utf-8"))
-        outfile.close()
-
         try:
             outs  = json.loads(output.decode("utf-8"))
         except:
@@ -142,7 +138,7 @@ def ansible_setup(info, setup_id, data=None):
         if pb_serializer.is_valid():
             pb_instance = pb_serializer.save()
             if pb_instance:
-                setup.update(playbook=pb_instance.id)
+                setup.update(playbook=pb_instance)
 
         code = """
         function() {
@@ -198,10 +194,6 @@ def install_service(info, setup_id,  service, conf_vars={}):
         logger.warn("something wrong with ansible install service call")
         raise
 
-    outfile = open("/tmp/output.service", "w")
-    outfile.write(output.decode("utf-8"))
-    outfile.close()
-
     if ansible_call.returncode == 0:
         setup.update(status="DONE")
         return True
@@ -250,10 +242,6 @@ def install_docker(info, setup_id):
         print("Unexpected error:", sys.exc_info()[0])
         logger.warn("something wrong with ansible install docker call")
         raise
-
-    outfile = open("/tmp/output.docker", "w")
-    outfile.write(output.decode("utf-8"))
-    outfile.close()
 
     if ansible_call.returncode == 0:
         logger.info("docker was installed")

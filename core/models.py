@@ -14,8 +14,8 @@ class Addon(Document):
     category = fields.StringField()
     author = fields.StringField()
     version = fields.StringField()
-    depends = fields.ListField(fields.StringField(blank=True), default=['core'])
-    clouds = fields.ListField(fields.StringField(blank=True), default=['core'])
+    depends = fields.ListField(fields.StringField(), blank=True)
+    clouds = fields.ListField(fields.StringField(), blank=True)
     fields = fields.ListField(fields.DictField())
 
 class Key(Document):
@@ -45,13 +45,14 @@ class Options(EmbeddedDocument):
     region = fields.StringField()
     image = fields.StringField()
     state = fields.StringField()
-    service_opts = fields.DictField(default={'core': 'core'})
+    service_opts = fields.DictField(blank=True)
 
 class Setup(Document):
     user = fields.StringField(max_length=50)
     service = fields.StringField(max_length=50)
     cloud = fields.StringField(max_length=50)
     options = fields.EmbeddedDocumentField(Options, blank=True)
-    playbook = fields.ObjectIdField(blank=True)
-    key_id = fields.ObjectIdField(blank=True)
+    playbook = fields.ReferenceField(AnsiblePlaybook, blank=True)
+    key_id = fields.ReferenceField(Key, blank=True)
     status = fields.StringField()
+

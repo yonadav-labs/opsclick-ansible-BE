@@ -4,7 +4,7 @@ from api.settings import BASE_DIR
 import logging
 from .models import Addon
 from .serializers import AddonSerializer
-from mongoengine.errors import ValidationError
+from mongoengine.errors import ValidationError, NotUniqueError
 
 _logger = logging.getLogger(__name__)
 
@@ -37,7 +37,10 @@ class CoreConfig(AppConfig):
             serializer = AddonSerializer(data=info)
 
             if serializer.is_valid():
-                serializer.save()
+                try:
+                    serializer.save()
+                except NotUniqueError as err:
+                    _logger.info("service exists %s" % serializer.data)
 
     def load_modules(self):
         self.initialize_paths()
