@@ -17,7 +17,7 @@ urlpatterns = [
     url(r'^service', include(service_patterns)),
     url(r'^cloud/(?P<cloud_name>[\w]+)$', views.cloud_detail, name='cloud fields'),
     url(r'^clouds$', views.clouds_info, name='cloud information'),
-    url(r'^cloud/(?P<cloud_name>[\w]+)/assets$', views.get_assets, name='cloud assets information'),
+    url(r'^cloud/assets$', views.get_assets, name='cloud assets information'),
     url(r'^setup', include(setup_patterns)),
     url(r'^test_serializer', views.test_serializer, name='endpoint to test serializers'),
     url(r'^jobs$', views.get_jobs, name='get jobs'),

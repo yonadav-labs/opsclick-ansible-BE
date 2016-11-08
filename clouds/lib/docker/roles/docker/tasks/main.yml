@@ -22,18 +22,19 @@
 
 - name: Enable Docker on reboot
   service: name=docker state=started enabled=yes 
+  when: deb_is_installed | failed
 
 - name: Install pip
   apt:
     name: python-pip
     state: present
     update-cache: yes
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and deb_is_installed
 
 - name: Install Docker API for containers orchestation
   pip:
     name: docker-py
     version: 1.9
     state: present
-  when: ansible_os_family == "Debian"
+  when: ansible_os_family == "Debian" and deb_is_installed
 
