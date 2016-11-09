@@ -1,0 +1,9 @@
+---
+- name: Create an apache container
+  docker_container:
+    name: apache_server
+    image: eboraas/apache
+    state: started
+    ports:
+      - "{{ port }}:80"
+      - "{{ ssl_port }}:443"
