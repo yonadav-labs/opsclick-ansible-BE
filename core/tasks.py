@@ -104,7 +104,7 @@ def ansible_setup(info, setup_id, data=None):
     key_file = open(ssh_key_path + ".pub", "r")
     ssh_key = key_file.readline().strip('\n')
     key_file.close()
-    data['options']['ssh_pub_keys'].append({ 'name': "OpsClick API Deploy",
+    data['options']['ssh_pub_keys'].append({ 'name': "OpsClick API Deploy key to %s" % user,
                                              'key': ssh_key })
 
     cloud_path = "{0}/clouds/{1}".format(BASE_DIR, cloud)

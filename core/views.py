@@ -178,7 +178,6 @@ def get_jobs(request):
                                           'service',
                                           'status')
             docs = json.loads(queryset.to_json())
-            # print(docs)
             for doc in docs:
                 play = AnsiblePlaybook.objects.filter(id=doc['playbook']['$oid'])
 #                                              .only('plays')
