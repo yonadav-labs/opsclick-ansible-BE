@@ -1,3 +1,0 @@
-[targets]
-#188.166.249.166
-localhost ansible_connection=local
