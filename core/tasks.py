@@ -115,7 +115,7 @@ def ansible_setup(info, setup_id, data=None):
     if service and cloud:
         logger.debug("configuring the cloud %s" % (cloud))
         options.pop('service_opts')
-        command = ['ansible-playbook', cloud_playbook, '-i', cloud_host, '--extra-vars', str(options)] 
+        command = ['ansible-playbook', cloud_playbook, '-i', cloud_host, '--extra-vars', str(options)]
         logger.debug(" ".join(command))
 
         env['ANSIBLE_CONFIG'] = cloud_path + "/ansible.cfg"
@@ -170,14 +170,14 @@ def ansible_setup(info, setup_id, data=None):
 
 @shared_task
 def install_service(info, setup_id,  service, conf_vars={}):
-    setup = Setup.objects.get(id=setup_id)
-    setup.update(status="Installing application")
-
     try:
         ssh_key_path, hosts = info
     except TypeError as err:
         logger.error("{0}".format(err))
-        return
+        return False
+
+    setup = Setup.objects.get(id=setup_id)
+    setup.update(status="Installing application")
 
     service_path = "{0}/services/{1}".format(BASE_DIR, service)
     service_playbook = service_path + "/main.yml"
@@ -195,7 +195,7 @@ def install_service(info, setup_id,  service, conf_vars={}):
         raise
 
     if ansible_call.returncode == 0:
-        setup.update(status="DONE")
+        setup.update(status="Installed")
         return True
 
     setup.update(status="Error in setup")
@@ -203,9 +203,6 @@ def install_service(info, setup_id,  service, conf_vars={}):
 
 @shared_task
 def install_docker(info, setup_id):
-    setup = Setup.objects.get(id=setup_id)
-    setup.update(status="Preparing server for the application")
-
     try:
         ssh_key_path, hosts = info
     except TypeError as err:
@@ -214,7 +211,10 @@ def install_docker(info, setup_id):
 
     if not hosts:
         logger.error("You need to define the hosts")
-        return
+        return False
+
+    setup = Setup.objects.get(id=setup_id)
+    setup.update(status="Preparing server for the application")
 
     docker_path = "{0}/clouds/lib/{1}".format(BASE_DIR, "docker")
     docker_playbook = docker_path + "/main.yml"
@@ -235,16 +235,17 @@ def install_docker(info, setup_id):
     command = ['ansible-playbook', docker_playbook, '-i', hosts.name, "--private-key", ssh_key_path]
     ansible_call = Popen(command, stdout=PIPE, env=env)
 
-    #logger.info(command)
+    # logger.info(command)
     try:
         output, errs = ansible_call.communicate()
     except:
         print("Unexpected error:", sys.exc_info()[0])
-        logger.warn("something wrong with ansible install docker call")
+        logger.error("something wrong with ansible install docker call")
         raise
 
     if ansible_call.returncode == 0:
-        logger.info("docker was installed")
+        return ssh_key_path, hosts.name
 
-    return ssh_key_path, hosts.name
+    setup.update(status="Error in setup")
+    return False
 
