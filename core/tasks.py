@@ -198,6 +198,7 @@ def install_service(info, setup_id,  service, conf_vars={}):
         setup.update(status="DONE")
         return True
 
+    print('##### something is wrong')
     setup.update(status="Error in setup")
     return False
 
@@ -245,6 +246,7 @@ def install_docker(info, setup_id):
 
     if ansible_call.returncode == 0:
         logger.info("docker was installed")
-
+    else:
+        print('@@@@@ Docker is not installed correctly')
     return ssh_key_path, hosts.name
 
