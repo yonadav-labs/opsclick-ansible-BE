@@ -1,13 +1,13 @@
 ---
-- name: Create a mysql container
+- name: Create a postgresql container
   docker_container:
-    name: mysqldb
-    image: mysql
+    name: postgresql
+    image: sameersbn/postgresql:9.5-3
     state: started
     ports:
-      - "{{ port }}:3306"
+      - "{{ port }}:5432"
     env:
-      MYSQL_ROOT_PASSWORD: "{{ root_pass }}"
-      MYSQL_DATABASE: "{{ db_name }}"
-      MYSQL_USER: "{{ db_user }}"
-      MYSQL_PASSWORD: "{{ db_pass }}"
+      PG_PASSWORD: "{{ postgres_pass }}"
+      DB_NAME: "{{ db_name }}"
+      DB_USER: "{{ db_user }}"
+      DB_PASS: "{{ db_pass }}"
