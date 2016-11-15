@@ -1,0 +1,20 @@
+---
+- name: Create a wordpress container
+  docker_container:
+    name: wordpress
+    image: appcontainers/wordpress
+    state: started
+    ports:
+      - "{{ port }}:80"
+      - "{{ ssl_port }}:443"
+    env:
+      APP_NAME: "{{ app_name }}"
+      APACHE_SVRALIAS: "{{ apache_svralias }}"
+      MYSQL_SERVER: "{{ mysql_server }}"
+      MYSQL_PASS: "{{ mysql_pass }}"
+      MYSQL_DB: "{{ mysql_db }}"
+      APP_USER: "{{ app_user }}"
+      APP_PASS: "{{ app_pass }}"
+      WP_KEY: "{{ wp_key }}"
+      #ENV: "{{ env }}"
+      #TERMTAG: "{{ termtag }}"
