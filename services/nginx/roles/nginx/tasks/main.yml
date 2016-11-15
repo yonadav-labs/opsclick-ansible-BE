@@ -2,7 +2,7 @@
 - name: Create an nginx container
   docker_container:
     name: nginx_server
-    image: jwilder/nginx-proxy
+    image: nginx
     state: started
     ports:
       - "{{ port }}:80"
