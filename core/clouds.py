@@ -66,6 +66,33 @@ class DigitalOcean(Cloud):
             return droplets
         return False
 
+    @staticmethod
+    def get_js_ip_filter():
+        code =  """
+        function() {
+            var droplets_ip = []
+            db[collection].find(query).forEach(function(doc) {
+                doc.plays.forEach(function(play) {
+                    play.tasks.forEach(function(task) {
+                        if(task.hosts.localhost.results) {
+                            task.hosts.localhost.results.forEach(function(result) {
+                                if(result.droplet) {
+                                    droplets_ip.push(result.droplet.ip_address);
+                                }
+                            });
+                        }
+                    });
+                });
+            });
+            if(droplets_ip.length > 0){
+                return droplets_ip;
+            }
+            return false;
+        }
+        """
+        return code
+    
+
 class AWS(Cloud):
 
     def __init__(self, credentials):
