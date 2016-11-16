@@ -1,0 +1,12 @@
+---
+- name: Create a mongodb container
+  docker_container:
+    name: mongodb
+    image: tutum/mongodb:3.0
+    state: started
+    ports:
+      - "{{ port }}:27017"
+    env:
+      MONGODB_DATABASE: "{{ db_name }}"
+      MONGODB_USER: "{{ mongodb_user }}"
+      MONGODB_PASS: "{{ mongodb_pass }}"

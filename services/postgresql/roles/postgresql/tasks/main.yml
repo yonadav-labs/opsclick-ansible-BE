@@ -1,0 +1,13 @@
+---
+- name: Create a postgresql container
+  docker_container:
+    name: postgresql
+    image: sameersbn/postgresql:9.5-3
+    state: started
+    ports:
+      - "{{ port }}:5432"
+    env:
+      PG_PASSWORD: "{{ postgres_pass }}"
+      DB_NAME: "{{ db_name }}"
+      DB_USER: "{{ db_user }}"
+      DB_PASS: "{{ db_pass }}"

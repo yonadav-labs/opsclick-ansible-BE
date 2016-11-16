@@ -189,6 +189,7 @@ def install_service(info, setup_id,  service, conf_vars={}):
         setup.update(status="Installed")
         return True
 
+    print('##### something is wrong')
     setup.update(status="Error in setup")
     return False
 
@@ -239,4 +240,5 @@ def install_docker(info, setup_id):
 
     setup.update(status="Error in setup")
     return False
+
 

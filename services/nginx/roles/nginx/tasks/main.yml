@@ -1,0 +1,11 @@
+---
+- name: Create an nginx container
+  docker_container:
+    name: nginx_server
+    image: nginx
+    state: started
+    ports:
+      - "{{ port }}:80"
+      - "{{ ssl_port }}:443"
+    volumes:
+      - "/var/www/html/*:/var/www/html/*:ro"

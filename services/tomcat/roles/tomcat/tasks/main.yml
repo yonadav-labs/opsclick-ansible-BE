@@ -1,0 +1,10 @@
+---
+- name: Create an tomcat container
+  docker_container:
+    name: tomcat
+    image: cloudesire/tomcat:7-jre8
+    state: started
+    ports:
+      - "{{ port }}:8080"
+    env:
+      TOMCAT_PASS: "{{ admin_pass }}"
