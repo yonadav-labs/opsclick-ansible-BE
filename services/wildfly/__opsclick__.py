@@ -8,11 +8,11 @@
         'digitalocean',
     ],
     'fields': [
-        # {
-        #     'name': 'port',
-        #     'label': 'Apache port',
-        #     'type': 'Number',
-        #     'default': 80
-        # },
+        {
+            'name': 'port',
+            'label': 'Apache port',
+            'type': 'Number',
+            'default': 80
+        },
     ]
 }
