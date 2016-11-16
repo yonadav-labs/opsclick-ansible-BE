@@ -36,6 +36,10 @@ def generate_ssh_key(setup_id, user, cloud):
         private_key_file.write(key_instance.private)
         private_key_file.close()
 
+        public_key_file = open(private_key_file + '.pub', 'w')
+        public_key_file.write(key_instance.public)
+        public_key_file.close()
+
         os.chmod(private_key_file, stat.S_IRUSR)
 
     except mongoengine.errors.DoesNotExist:
@@ -46,12 +50,15 @@ def generate_ssh_key(setup_id, user, cloud):
 
         private_key_data = private_key.private_bytes(encoding=serialization.Encoding.PEM,
                                                      format=serialization.PrivateFormat.PKCS8,
-                                                     encryption_algoritm=serialization.NoEncryption()).decode()
+                                                     encryption_algorithm=serialization.NoEncryption()).decode()
         private_key_file.write(private_key_data)
         private_key_file.close()
 
         public_key_data = private_key.public_bytes(encoding=serialization.Encoding.OpenSSH,
                                                    format=serialization.PublicFormat.OpenSSH).decode()
+        public_key_file = open(private_key_file + '.pub', 'w')
+        public_key_file.write(public_key_data)
+        public_key_file.close()
 
         key = Key(user=user,
                   cloud=cloud,
@@ -173,6 +180,7 @@ def install_service(info, setup_id,  service, conf_vars={}):
 
     try:
         os.remove(ssh_key_path)
+        os.remove(ssh_key_path + ".pub")
     except:
         pass
 
