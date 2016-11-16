@@ -1,0 +1,9 @@
+---
+- name: Create a wildfly container
+  docker_container:
+    name: wildfly
+    image: jboss/wildfly
+    state: started
+    # ports:
+    #   - "{{ port }}:80"
+    #   - "{{ ssl_port }}:443"
