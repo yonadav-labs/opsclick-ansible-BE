@@ -1,0 +1,8 @@
+---
+- name: Create a elasticsearch container
+  docker_container:
+    name: elasticsearch
+    image: elasticsearch:5.0.0
+    state: started
+    ports:
+      - "{{ port }}:9200"
