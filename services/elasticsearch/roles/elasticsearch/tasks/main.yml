@@ -2,7 +2,7 @@
 - name: Create a elasticsearch container
   docker_container:
     name: elasticsearch
-    image: elasticsearch:5.0.0
+    image: elasticsearch:2.4
     state: started
     ports:
       - "{{ port }}:9200"
