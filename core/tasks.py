@@ -36,11 +36,11 @@ def generate_ssh_key(setup_id, user, cloud):
         private_key_file.write(key_instance.private)
         private_key_file.close()
 
-        public_key_file = open(private_key_file + '.pub', 'w')
+        public_key_file = open(private_key_file.name + '.pub', 'w')
         public_key_file.write(key_instance.public)
         public_key_file.close()
 
-        os.chmod(private_key_file, stat.S_IRUSR)
+        os.chmod(private_key_file.name, stat.S_IRUSR)
 
     except mongoengine.errors.DoesNotExist:
         private_key_file = NamedTemporaryFile(delete=False, mode='w')
@@ -56,7 +56,7 @@ def generate_ssh_key(setup_id, user, cloud):
 
         public_key_data = private_key.public_bytes(encoding=serialization.Encoding.OpenSSH,
                                                    format=serialization.PublicFormat.OpenSSH).decode()
-        public_key_file = open(private_key_file + '.pub', 'w')
+        public_key_file = open(private_key_file.name + '.pub', 'w')
         public_key_file.write(public_key_data)
         public_key_file.close()
 
@@ -188,7 +188,6 @@ def install_service(info, setup_id,  service, conf_vars={}):
         setup.update(status="Installed")
         return True
 
-    print('##### something is wrong')
     setup.update(status="Error in setup")
     return False
 
