@@ -1,0 +1,11 @@
+---
+- name: Create a couchdb container
+  docker_container:
+    name: couchdb
+    image: couchdb
+    state: started
+    ports:
+      - "{{ port }}:5984"
+    env:
+      COUCHDB_USER: "{{ couchdb_user }}"
+      COUCHDB_PASSWORD: "{{ couchdb_password }}"
