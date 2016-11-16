@@ -1,0 +1,8 @@
+---
+- name: Create a nagios container
+  docker_container:
+    name: nagios
+    image: quantumobject/docker-nagios
+    state: started
+    ports:
+      - "{{ port }}:80"

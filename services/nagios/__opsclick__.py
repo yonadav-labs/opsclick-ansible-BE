@@ -1,9 +1,9 @@
 {
-    'name': 'wildfly',
+    'name': 'nagios',
     'type': 'service',
     'author': 'Andrew Thomas',
     'version': '0.1',
-    'category': 'Java Application Server',
+    'category': 'Application',
     'clouds': [
         'digitalocean',
     ],
@@ -12,7 +12,7 @@
             'name': 'port',
             'label': 'server port',
             'type': 'Number',
-            'default': 8080
+            'default': 80
         },
     ]
 }
