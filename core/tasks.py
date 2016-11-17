@@ -54,7 +54,7 @@ def generate_ssh_key(setup_id, user, cloud):
         private_key_file.write(private_key_data)
         private_key_file.close()
 
-        public_key_data = private_key.public_bytes(encoding=serialization.Encoding.OpenSSH,
+        public_key_data = private_key.public_key().public_bytes(encoding=serialization.Encoding.OpenSSH,
                                                    format=serialization.PublicFormat.OpenSSH).decode()
         public_key_file = open(private_key_file.name + '.pub', 'w')
         public_key_file.write(public_key_data)
