@@ -177,14 +177,19 @@ def get_jobs(request):
                                           'cloud',
                                           'service',
                                           'status')
-            docs = json.loads(queryset.to_json())
-            for doc in docs:
-                play = AnsiblePlaybook.objects.filter(id=doc['playbook']['$oid'])
-#                                              .only('plays')
+            if len(queryset) > 0:
+                docs = json.loads(queryset.to_json())
+                for doc in docs:
+                    try:
+                        play = AnsiblePlaybook.objects.filter(id=doc['playbook']['$oid'])
+                        #                                              .only('plays')
 
-                doc['playbook'] = json.loads(play.to_json())[0]
-
-            return Response(docs, status=status.HTTP_200_OK)
+                        doc['playbook'] = json.loads(play.to_json())[0]
+                    except:
+                        pass
+                return Response(docs, status=status.HTTP_200_OK)
+            else:
+                return Response("The user does not exists", status=status.HTTP_400_BAD_REQUEST)
 
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
