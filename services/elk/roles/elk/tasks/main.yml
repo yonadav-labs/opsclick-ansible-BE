@@ -1,0 +1,8 @@
+---
+- name: Create an ELK container
+  docker_container:
+    name: ELK
+    image: sebp/elk:es241_l240_k461
+    state: started
+    ports:
+      - "{{ port }}:5601"
