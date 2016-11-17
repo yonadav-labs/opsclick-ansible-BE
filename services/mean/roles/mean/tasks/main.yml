@@ -1,0 +1,10 @@
+---
+- name: Create a MEAN container
+  docker_container:
+    name: MEAN
+    image: maccam912/meanjs
+    state: started
+    ports:
+      - "{{ http_port }}:80"
+      - "{{ https_port }}:443"
+      - "{{ meanjs_port }}:3000"
