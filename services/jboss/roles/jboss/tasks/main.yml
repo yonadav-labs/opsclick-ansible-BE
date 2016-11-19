@@ -1,0 +1,11 @@
+---
+- name: Create a jboss container
+  docker_container:
+    name: jboss
+    image: tutum/jboss
+    state: started
+    ports:
+      - "{{ port }}:8080"
+      - "9990:9990"
+    env:
+      JBOSS_PASS: "{{ jboss_pass }}"
