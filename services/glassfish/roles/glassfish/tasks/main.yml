@@ -1,0 +1,9 @@
+---
+- name: Create a glassfish container
+  docker_container:
+    name: glassfish
+    image: glassfish/nightly
+    state: started
+    ports:
+      - "{{ port }}:4848"
+      - "8080:8080"

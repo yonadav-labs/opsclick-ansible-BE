@@ -1,0 +1,11 @@
+---
+- name: Create a rabbitmq container
+  docker_container:
+    name: rabbitmq
+    image: rabbitmq:3-management
+    state: started
+    ports:
+      - "{{ port }}:15672"
+    env:
+      RABBITMQ_DEFAULT_USER: "{{ user }}"
+      RABBITMQ_DEFAULT_PASS: "{{ pass }}"

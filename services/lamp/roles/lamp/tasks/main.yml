@@ -1,0 +1,11 @@
+---
+- name: Create a lamp container
+  docker_container:
+    name: lamp
+    image: tutum/lamp
+    state: started
+    ports:
+      - "{{ port }}:80"
+      - "{{ mysql_port }}:3306"
+    env:
+      MYSQL_PASS: "{{ mysql_pass }}"
