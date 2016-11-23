@@ -1,0 +1,15 @@
+---
+- name: Create a activemq container
+  docker_container:
+    name: activemq
+    image: webcenter/activemq
+    state: started
+    ports:
+      - "{{ port }}:8161"
+      - "61616:61616" 
+      - "61613:61613"
+    env:
+      # ACTIVEMQ_ADMIN_LOGIN: "{{ activemq_admin_login }}"
+      # ACTIVEMQ_ADMIN_PASSWORD: "{{ activemq_admin_password }}"
+      ACTIVEMQ_MIN_MEMORY: "{{ activemq_min_memory }}"
+      ACTIVEMQ_MAX_MEMORY: "{{ activemq_max_memory }}"

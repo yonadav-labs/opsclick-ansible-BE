@@ -1,0 +1,9 @@
+---
+- name: Create a nexus container
+  docker_container:
+    name: nexus
+    image: sonatype/nexus
+    state: started
+    ports:
+      - "{{ port }}:8081"
+    #   - "{{ ssl_port }}:443"

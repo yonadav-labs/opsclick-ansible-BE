@@ -1,0 +1,10 @@
+---
+- name: Create a tcserver_ container
+  docker_container:
+    name: tcserver_
+    image: clotech/tcserver
+    state: started
+    ports:
+      - "{{ port }}:8080"
+      - "6969:6969"
+      - "8443:8443"

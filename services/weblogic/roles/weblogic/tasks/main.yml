@@ -1,0 +1,9 @@
+---
+- name: Create a weblogic container
+  docker_container:
+    name: weblogic
+    image: ismaleiva90/weblogic12
+    state: started
+    ports:
+      - "{{ port }}:7001"
+    #   - "{{ ssl_port }}:443"

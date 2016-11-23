@@ -1,0 +1,8 @@
+---
+- name: Create a tcserver container
+  docker_container:
+    name: tcserver
+    image: ikamman/docker-tc-server
+    state: started
+    ports:
+      - "{{ port }}:8111"
